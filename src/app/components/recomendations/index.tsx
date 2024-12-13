@@ -1,8 +1,7 @@
 import { RecommendationProps, User } from "@/app/interfaces"
 import Image from "next/image"
-import { useState } from "react"
 
-export const Recomendations = ({setUsersFollowed,user,usersFollowed,followUser}:RecommendationProps)=> {
+export const Recomendations = ({user,usersFollowed,followUser}:RecommendationProps)=> {
     return(
         <>
               <div
@@ -37,7 +36,7 @@ export const Recomendations = ({setUsersFollowed,user,usersFollowed,followUser}:
                     followUser(user)
                   }
                }}
-            >{usersFollowed.some((use) => user === user) ? "unfollow" : "follow"}</button>
+            >{usersFollowed.some((use) => use === user) ? "unfollow" : "follow"}</button>
 
         </div>
         </>

@@ -45,7 +45,7 @@ export interface User {
   export interface RecommendationProps {
     user:User;
     usersFollowed:User[]
-    setUsersFollowed : Dispatch<SetStateAction<User[]>>
+    //setUsersFollowed : Dispatch<SetStateAction<User[]>>
     followUser: (user:User) => void 
        
   }

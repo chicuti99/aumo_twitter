@@ -50,12 +50,6 @@ export default function Home() {
   const[actualUser,setActualUser]= useState<User>(usuarioPadrao)
   const wasAlreadyRequested = useRef(false);
 
-  const style = {
-    backgroundImage: "url('/lego.jpg')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    //filter: 'blur(10px)'
-  }
 
   function followUser(user:User) {
     const isfollowed = usersFollowed.find((actualUser:User) => actualUser === user); 
@@ -119,7 +113,7 @@ export default function Home() {
           console.log(err)
         }
     }
-    
+
     useEffect(() => {
       fetchData();
     },[wasAlreadyRequested])
@@ -231,7 +225,7 @@ export default function Home() {
         
         <div style={{width:'50%',display:'flex',gap:15}}>
         {users.map((user:User) => (
-          <Recomendations user={user} usersFollowed={usersFollowed} setUsersFollowed={setUsersFollowed} followUser={followUser}/>
+          <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}/>
         ))}
         </div>
       </div>
