@@ -54,6 +54,20 @@ export default function Home() {
     //filter: 'blur(10px)'
   }
 
+  function followUser(user:User) {
+    console.log('entreeeii')
+    const isfollowed = usersFollowed.find((actualUser:User) => actualUser === user); 
+    if(!isfollowed){
+        const updatedFollowedList = [...usersFollowed, user];
+        setUsersFollowed(updatedFollowedList);
+    }
+  }
+
+  function UnfollowUser(userToRemove: User) {
+    const updatedList = usersFollowed.filter((user) => user.login.uuid !== userToRemove.login.uuid);
+    setUsersFollowed(updatedList);
+  }
+
     const fetchData = async () => {
       try {
         console.clear()
@@ -98,17 +112,10 @@ export default function Home() {
             <span className="px-24 py-4 text-white font-bold cursor-pointer" onClick={()=> setFollowersList(true)}>following {usersFollowed.length} user</span>
           ) : (
             <>
-              {usersFollowed.map((user:User) => {
-                return (
-                  <>
-                    <FollowersList setFollowersList={setFollowersList} user={user} userQuantity={usersFollowed.length}/>
-                  </>
-                )
-              })}
+            <FollowersList setFollowersList={setFollowersList} usersFollowed={usersFollowed} UnfollowUser={UnfollowUser}/>
             </>
           )}
-          {/* <span className="px-24 py-4 text-white font-bold cursor-pointer" onClick={()=> setFollowersList(true)}>following 1 user</span>
-          {followersList && <FollowersList/>} */}
+
           
         </div>
       </div>
@@ -121,7 +128,7 @@ export default function Home() {
           <div
             className="w-full h-[100px]"
             style={{
-              backgroundImage: "url('/lego.jpg')",
+              backgroundImage: "/lego.jpg",
               backgroundSize: 'cover',
               backgroundPosition: 'top',
               filter: 'blur(1px)',
@@ -139,7 +146,7 @@ export default function Home() {
               height={0}
               className="w-[150px] h-[150px] rounded-full py-[30px]"
             />
-            <button className="bg-blue-500 text-white px-8 py-2 font-bold rounded">Follow</button>
+            <button className="bg-blue-500 text-white px-8 py-2 font-bold rounded" onClick={()=> followUser(actualUser)}>Follow</button>
             <span className="text-black text-lg">{actualUser.name.first + " " + actualUser.name.last}</span>
             <span className="text-black text-sm">{actualUser.location.city +"," + actualUser.location.country}</span>
           </div>
@@ -172,10 +179,9 @@ export default function Home() {
         
         <div style={{width:'50%',display:'flex',gap:15}}>
         {users.map((user:User) => (
-          <Recomendations user={user} usersFollowed={usersFollowed} setUsersFollowed={setUsersFollowed}/>
+          <Recomendations user={user} usersFollowed={usersFollowed} setUsersFollowed={setUsersFollowed} followUser={followUser}/>
         ))}
         </div>
-        <button onClick={()=> fetchData()}>conectar</button>
       </div>
     </div>
   );

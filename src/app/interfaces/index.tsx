@@ -3,8 +3,8 @@ import { SetStateAction } from "react";
 
 export interface followerMenu  {
     setFollowersList: React.Dispatch<SetStateAction<boolean>>
-    user:User;
-    userQuantity:number
+    usersFollowed:User[];
+    UnfollowUser: (userToRemove: User) => void 
 }
 
 export interface User {
@@ -45,4 +45,6 @@ export interface User {
     user:User;
     usersFollowed:User[]
     setUsersFollowed : Dispatch<SetStateAction<User[]>>
+    followUser: (user:User) => void 
+       
   }
