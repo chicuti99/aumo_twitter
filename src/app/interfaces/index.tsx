@@ -1,8 +1,10 @@
-import React from "react";
+import React, { Dispatch } from "react";
 import { SetStateAction } from "react";
 
 export interface followerMenu  {
     setFollowersList: React.Dispatch<SetStateAction<boolean>>
+    user:User;
+    userQuantity:number
 }
 
 export interface User {
@@ -40,15 +42,7 @@ export interface User {
   }
 
   export interface RecommendationProps {
-    login: {
-      username: string;
-    };
-    picture: {
-      thumbnail: string;
-    };
-
-    name : {
-        first:string;
-        last:string;
-    }
+    user:User;
+    usersFollowed:User[]
+    setUsersFollowed : Dispatch<SetStateAction<User[]>>
   }

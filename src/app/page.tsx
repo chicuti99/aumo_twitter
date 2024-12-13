@@ -3,15 +3,12 @@
 import Image from "next/image";
 import { Recomendations } from "./components/recomendations";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FollowersList } from "./components/followersList";
 import axios from 'axios'
 import {User} from './interfaces/index'
 export default function Home() {
-
-  const[followersList,setFollowersList] = useState(false);
-  const[users,setUsers] = useState<User[]>([]);
-  const[actualUser,setActualUser]= useState<User>({
+  const usuarioPadrao = {
     name : {
       first: "arthur",
       last:"Mendes",
@@ -43,7 +40,13 @@ export default function Home() {
       age:25,
       date: ""
     }
-  })
+  }
+  const[followersList,setFollowersList] = useState(false);
+  const[users,setUsers] = useState<User[]>([]);
+  const[usersFollowed,setUsersFollowed] = useState<User[]>([])
+  const[actualUser,setActualUser]= useState<User>(usuarioPadrao)
+  const wasAlreadyRequested = useRef(false);
+
   const style = {
     backgroundImage: "url('/lego.jpg')",
     backgroundSize: 'cover',
@@ -66,18 +69,25 @@ export default function Home() {
           newUser.push(user)
         })
         setUsers(newUser);
-        
-        console.log(newUser)
+        localStorage.setItem('@Users',JSON.stringify(newUser));
+        const storedListOfUsersFollowed = localStorage.getItem("@UsersFollowed");
+        if(storedListOfUsersFollowed){
+          setFollowersList(JSON.parse(storedListOfUsersFollowed))
+        }
 
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
+
     useEffect(() => {
       fetchData();
-      localStorage.setItem('@Users',JSON.stringify(users));
-    },[])
+    },[wasAlreadyRequested])
+
+    useEffect(() => {
+      localStorage.setItem("@Users",JSON.stringify(usersFollowed));
+    },[usersFollowed]);
 
   return (
     <div className="w-full h-full z-0 relative bg-[#F6F6F6]">
@@ -85,9 +95,17 @@ export default function Home() {
         <div className="flex justify-between w-full h-[20%] shadow-[0_-15px_25px_3px_rgba(0,0,0,1)]">
           <span className="px-24 py-4 text-white font-normal">users_like.me</span>
           {followersList === false ? (
-            <span className="px-24 py-4 text-white font-bold cursor-pointer" onClick={()=> setFollowersList(true)}>following 1 user</span>
+            <span className="px-24 py-4 text-white font-bold cursor-pointer" onClick={()=> setFollowersList(true)}>following {usersFollowed.length} user</span>
           ) : (
-            <FollowersList setFollowersList={setFollowersList}/>
+            <>
+              {usersFollowed.map((user:User) => {
+                return (
+                  <>
+                    <FollowersList setFollowersList={setFollowersList} user={user} userQuantity={usersFollowed.length}/>
+                  </>
+                )
+              })}
+            </>
           )}
           {/* <span className="px-24 py-4 text-white font-bold cursor-pointer" onClick={()=> setFollowersList(true)}>following 1 user</span>
           {followersList && <FollowersList/>} */}
@@ -154,7 +172,7 @@ export default function Home() {
         
         <div style={{width:'50%',display:'flex',gap:15}}>
         {users.map((user:User) => (
-          <Recomendations login={user.login} picture={user.picture} name={user.name}/>
+          <Recomendations user={user} usersFollowed={usersFollowed} setUsersFollowed={setUsersFollowed}/>
         ))}
         </div>
         <button onClick={()=> fetchData()}>conectar</button>
