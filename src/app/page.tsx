@@ -71,7 +71,6 @@ export default function Home() {
 
     const fetchData = async () => {
       try {
-        console.clear()
         const response = await axios.get("https://randomuser.me/api/?results=6");
         const newUser:User[] = []
         
@@ -131,7 +130,7 @@ export default function Home() {
             <span className="px-24 py-4 text-white font-bold cursor-pointer" onClick={()=> setFollowersList(true)}>following {usersFollowed.length} user</span>
           ) : (
             <>
-            <FollowersList setFollowersList={setFollowersList} usersFollowed={usersFollowed} UnfollowUser={UnfollowUser}/>
+            <FollowersList setFollowersList={setFollowersList} usersFollowed={usersFollowed} UnfollowUser={UnfollowUser} />
             </>
           )}
 
@@ -225,7 +224,7 @@ export default function Home() {
         
         <div style={{width:'50%',display:'flex',gap:15}}>
         {users.map((user:User) => (
-          <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}  key={user.login.uuid} />
+          <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}  key={user.login.uuid} UnfollowUser={UnfollowUser}/>
         ))}
         </div>
       </div>

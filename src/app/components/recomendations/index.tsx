@@ -1,7 +1,7 @@
 import { RecommendationProps } from "@/app/interfaces"
 import Image from "next/image"
 
-export const Recomendations = ({user,usersFollowed,followUser}:RecommendationProps)=> {
+export const Recomendations = ({user,usersFollowed,followUser,UnfollowUser}:RecommendationProps)=> {
     return(
         <>
               <div
@@ -29,11 +29,11 @@ export const Recomendations = ({user,usersFollowed,followUser}:RecommendationPro
           </span>
               <button className="bg-blue-500 text-white px-[5px] py-[10px] text-xs rounded" 
                 onClick={() => {
-                  console.clear();
-                  console.log(user);
-                  console.log(usersFollowed);
-                  if(usersFollowed.some((use) => use === user)){
+                  if(!usersFollowed.some((use) => use === user)){
                     followUser(user)
+                  }
+                  else{
+                    UnfollowUser(user)
                   }
                }}
             >{usersFollowed.some((use) => use === user) ? "unfollow" : "follow"}</button>

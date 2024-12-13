@@ -46,6 +46,6 @@ export interface User {
     user:User;
     usersFollowed:User[]
     //setUsersFollowed : Dispatch<SetStateAction<User[]>>
-    followUser: (user:User) => void 
-       
+    followUser: (user:User) => void ;
+    UnfollowUser:(userToRemove: User) => void;
   }
