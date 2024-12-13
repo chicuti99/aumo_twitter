@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import { Recomendations } from "./components/recomendations";
-
+import { FaAngleRight } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 import { FollowersList } from "./components/followersList";
 import axios from 'axios'
 import {User} from './interfaces/index'
+import { LuRefreshCcw } from "react-icons/lu";
+
 export default function Home() {
   const usuarioPadrao = {
     name : {
@@ -39,7 +41,8 @@ export default function Home() {
     registered: {
       age:25,
       date: ""
-    }
+    },
+    nat:"BR"
   }
   const[followersList,setFollowersList] = useState(false);
   const[users,setUsers] = useState<User[]>([]);
@@ -55,7 +58,6 @@ export default function Home() {
   }
 
   function followUser(user:User) {
-    console.log('entreeeii')
     const isfollowed = usersFollowed.find((actualUser:User) => actualUser === user); 
     if(!isfollowed){
         const updatedFollowedList = [...usersFollowed, user];
@@ -66,6 +68,11 @@ export default function Home() {
   function UnfollowUser(userToRemove: User) {
     const updatedList = usersFollowed.filter((user) => user.login.uuid !== userToRemove.login.uuid);
     setUsersFollowed(updatedList);
+  }
+
+  const searchNewUser = async() => {
+    const response = await axios.get("https://randomuser.me/api/")
+    setActualUser(response.data.results[0]);
   }
 
     const fetchData = async () => {
@@ -94,7 +101,25 @@ export default function Home() {
       }
     };
 
-
+    const refreshSuggestions = async () => {
+      try{
+        const response = await axios.get("https://randomuser.me/api/?results=5");
+        setUsers(response.data.results);
+        const localUsers = localStorage.getItem("@Users");
+        if(localUsers){
+          const parsedLocalUsers = JSON.parse(localUsers);
+          response.data.results.map((result:User) => {
+            parsedLocalUsers.push(result);
+          })
+          localStorage.setItem("@Users",JSON.stringify(parsedLocalUsers));
+        }
+      }
+        catch(err)
+        {
+          console.log(err)
+        }
+    }
+    
     useEffect(() => {
       fetchData();
     },[wasAlreadyRequested])
@@ -128,29 +153,51 @@ export default function Home() {
           <div
             className="w-full h-[100px]"
             style={{
-              backgroundImage: "/lego.jpg",
+              backgroundImage: `url('${actualUser.picture.thumbnail}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'top',
-              filter: 'blur(1px)',
+              width: '100%', 
             }}
           >
-            <Image src={"/lego.jpg"} width={50} height={50} alt="" style={style}/>
+            
           </div>
-
-          <div className="flex flex-col items-center justify-center w-full h-1/2 translate-x-0 -translate-y-[40%]">
-            <Image
-              //src="/lego.jpg"
-              src={actualUser.picture.thumbnail}
-              alt="photo"
-              width={0}
-              height={0}
-              className="w-[150px] h-[150px] rounded-full py-[30px]"
-            />
-            <button className="bg-blue-500 text-white px-8 py-2 font-bold rounded" onClick={()=> followUser(actualUser)}>Follow</button>
-            <span className="text-black text-lg">{actualUser.name.first + " " + actualUser.name.last}</span>
-            <span className="text-black text-sm">{actualUser.location.city +"," + actualUser.location.country}</span>
-          </div>
-
+            <div className="flex flex-col items-center justify-center w-full h-1/2 translate-x-0 -translate-y-[40%]">
+              <Image
+                src={actualUser.picture.thumbnail}
+                alt="photo"
+                width={0}
+                height={0}
+                className="w-[150px] h-[150px] rounded-full py-[30px]"
+              />
+              
+              <div style={{ display: "flex", flexDirection: "column", width: "100%", alignItems: "center" }}>
+                <div style={{ 
+                    width: "100%", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    position: "relative", 
+                    padding: "0 10px" 
+                }}>
+                  <button 
+                    className="bg-blue-500 text-white px-8 py-2 font-bold rounded" 
+                    onClick={() => followUser(actualUser)}
+                  >
+                    Follow
+                  </button>
+                  <div style={{ 
+                      position: "absolute", 
+                      right: 10, 
+                      top: "50%", 
+                      transform: "translateY(-50%)" 
+                  }}>
+                    <FaAngleRight  size={30} cursor="pointer" onClick={()=> searchNewUser()}/>
+                  </div>
+                </div>
+                <span className="text-black text-lg text-center">{actualUser.name.first + " " + actualUser.name.last}</span>
+                <span className="text-black text-sm text-center">{actualUser.location.city + "," + actualUser.location.country}</span>
+              </div>
+            </div>
         </div>
 
 
@@ -158,16 +205,16 @@ export default function Home() {
           <div style={{display:'flex',gap:10,width:'100%',height:'100%',justifyContent:'space-between'}}>
             <div style={{backgroundColor:'white',width:'50%',display:'flex',flexDirection:'column',padding:15,gap:15,height:190}}>
               <span style={{fontSize:16,fontWeight:900}}>Personal info</span>
-              <span style={{fontSize:12,color:"gray"}}>born at:BR</span>
-              <span style={{fontSize:12,color:"gray"}}>age:25 year old</span>
+              <span style={{fontSize:12,color:"gray"}}>born at: {actualUser.nat}</span>
+              <span style={{fontSize:12,color:"gray"}}>age: {actualUser.registered.age} year old</span>
 
               <span style={{paddingTop:20,borderTop:'1px solid black',color:'blue',cursor:'pointer'}}>see more</span>
 
             </div>
               <div style={{backgroundColor:'white',width:'50%',display:'flex',flexDirection:'column',padding:15,gap:15,height:190}}>
                 <span style={{fontSize:16,fontWeight:900}}>Contact info</span>
-                <span style={{fontSize:12,color:"gray"}}>Email:arthurchicuti0@gmail.com</span>
-                <span style={{fontSize:12,color:"gray"}}>phone:(27) 99956-2635</span>
+                <span style={{fontSize:12,color:"gray"}}>Email:{actualUser.email}</span>
+                <span style={{fontSize:12,color:"gray"}}>phone:{actualUser.phone}</span>
 
                 <span style={{paddingTop:20,borderTop:'1px solid black',color:'blue',cursor:'pointer'}} >see more</span>
               </div>
@@ -175,7 +222,12 @@ export default function Home() {
           </div>
 
         </div>
-        <span style={{width:'50%',display:'flex',fontSize:'18px',fontWeight:800}}>Suggestion 4you</span>
+        <div style={{display:'flex',width:'50%'}}>
+          <span style={{width:'100%',display:'flex',fontSize:'18px',fontWeight:800}}>Suggestion 4you</span>
+          <span style={{display:'flex',fontSize:'18px',fontWeight:800,alignItems:"center",justifyContent:'flex-end',cursor:'pointer'}}
+            onClick={()=> refreshSuggestions()}
+          >refresh   <LuRefreshCcw/></span>
+        </div>
         
         <div style={{width:'50%',display:'flex',gap:15}}>
         {users.map((user:User) => (

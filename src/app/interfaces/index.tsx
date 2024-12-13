@@ -39,6 +39,7 @@ export interface User {
       medium: string;
       thumbnail: string;
     };
+    nat:string
   }
 
   export interface RecommendationProps {
