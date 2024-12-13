@@ -225,7 +225,7 @@ export default function Home() {
         
         <div style={{width:'50%',display:'flex',gap:15}}>
         {users.map((user:User) => (
-          <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}/>
+          <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}  key={user.login.uuid} />
         ))}
         </div>
       </div>
