@@ -1,4 +1,4 @@
-import { RecommendationProps, User } from "@/app/interfaces"
+import { RecommendationProps } from "@/app/interfaces"
 import Image from "next/image"
 
 export const Recomendations = ({user,usersFollowed,followUser}:RecommendationProps)=> {
