@@ -49,7 +49,11 @@ export default function Home() {
   const[usersFollowed,setUsersFollowed] = useState<User[]>([])
   const[actualUser,setActualUser]= useState<User>(usuarioPadrao)
   const wasAlreadyRequested = useRef(false);
+  const[isFollowed,setIsFollowed] = useState(false);
 
+  useEffect(() => {
+    setIsFollowed(usersFollowed.some((use) => use === actualUser))
+  },[actualUser,usersFollowed]);
 
   function followUser(user:User) {
     const isfollowed = usersFollowed.find((actualUser:User) => actualUser === user); 
@@ -172,12 +176,24 @@ export default function Home() {
                     position: "relative", 
                     padding: "0 10px" 
                 }}>
-                  <button 
+                  {/* <button 
                     className="bg-blue-500 text-white px-8 py-2 font-bold rounded" 
                     onClick={() => followUser(actualUser)}
                   >
                     Follow
-                  </button>
+                  </button> */}
+
+                {!isFollowed ? (
+                  <>
+                      <button className="bg-blue-500 text-white px-8 py-2 font-bold rounded"
+                  onClick={() => followUser(actualUser)}>follow</button>
+                  </>
+                ) : (
+                  <>
+                    <button className="bg-red-500 text-white px-8 py-2 font-bold rounded"
+                      onClick={() => UnfollowUser(actualUser)}>unfollow</button>
+                  </>
+                )}
                   <div style={{ 
                       position: "absolute", 
                       right: 10, 
