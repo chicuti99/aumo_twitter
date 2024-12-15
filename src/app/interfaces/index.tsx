@@ -45,7 +45,19 @@ export interface User {
   export interface RecommendationProps {
     user:User;
     usersFollowed:User[]
-    //setUsersFollowed : Dispatch<SetStateAction<User[]>>
     followUser: (user:User) => void ;
     UnfollowUser:(userToRemove: User) => void;
+  }
+
+  export interface Info {
+
+    actualUser:User;
+    setShowInfos: React.Dispatch<SetStateAction<{
+      personalInfo: boolean;
+      contactInfo: boolean;
+  }>>
+    showInfos: {
+      personalInfo: boolean;
+      contactInfo: boolean;
+  }
   }
