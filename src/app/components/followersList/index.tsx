@@ -19,6 +19,7 @@ export const FollowersList = ({ setFollowersList, usersFollowed,UnfollowUser }: 
       }}
       className="max-w-md px-4 py-2 bg-gray-100 rounded-lg shadow-md"
     >
+
       <span
         style={{ display: "flex", justifyContent: "flex-end", color: "#9760F3", fontWeight: "bolder", alignItems: "center" }}
       >
@@ -52,6 +53,7 @@ export const FollowersList = ({ setFollowersList, usersFollowed,UnfollowUser }: 
           </div>
         );
       })}
+        
     </div>
   );
 };

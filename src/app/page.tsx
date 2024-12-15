@@ -50,9 +50,17 @@ export default function Home() {
   const[actualUser,setActualUser]= useState<User>(usuarioPadrao)
   const wasAlreadyRequested = useRef(false);
   const[isFollowed,setIsFollowed] = useState(false);
+  const[showInfos,setShowInfos] = useState({
+    personalInfo:false,
+    contactInfo:false
+  })
 
   useEffect(() => {
-    setIsFollowed(usersFollowed.some((use) => use === actualUser))
+    setIsFollowed(usersFollowed.some((use) => use === actualUser));
+    if(usersFollowed.length > 0) {
+    localStorage.setItem("@UsersFollowed",JSON.stringify(usersFollowed));
+
+    }
   },[actualUser,usersFollowed]);
 
   function followUser(user:User) {
@@ -94,6 +102,10 @@ export default function Home() {
         }
 
       } catch (error) {
+        const users = localStorage.getItem("@Users");
+        if(users){
+          setUsers(JSON.parse(users))
+        }
         console.error("Error fetching user data:", error);
       }
     };
@@ -119,6 +131,11 @@ export default function Home() {
 
     useEffect(() => {
       fetchData();
+      const storedUsedFollowesList = localStorage.getItem("@UsersFollowed")
+      if(storedUsedFollowesList){
+        const parsedStoredUsedFollowersList = JSON.parse(storedUsedFollowesList)
+        setUsersFollowed(parsedStoredUsedFollowersList)
+      }
     },[wasAlreadyRequested])
 
     useEffect(() => {
@@ -137,7 +154,6 @@ export default function Home() {
             <FollowersList setFollowersList={setFollowersList} usersFollowed={usersFollowed} UnfollowUser={UnfollowUser} />
             </>
           )}
-
           
         </div>
       </div>
@@ -176,12 +192,6 @@ export default function Home() {
                     position: "relative", 
                     padding: "0 10px" 
                 }}>
-                  {/* <button 
-                    className="bg-blue-500 text-white px-8 py-2 font-bold rounded" 
-                    onClick={() => followUser(actualUser)}
-                  >
-                    Follow
-                  </button> */}
 
                 {!isFollowed ? (
                   <>
@@ -217,7 +227,12 @@ export default function Home() {
               <span style={{fontSize:12,color:"gray"}}>born at: {actualUser.nat}</span>
               <span style={{fontSize:12,color:"gray"}}>age: {actualUser.registered.age} year old</span>
 
-              <span style={{paddingTop:20,borderTop:'1px solid black',color:'blue',cursor:'pointer'}}>see more</span>
+              <span style={{paddingTop:20,borderTop:'1px solid black',color:'blue',cursor:'pointer'}} 
+                onClick={()=> setShowInfos((prev) => ({
+                  ...prev,
+                  personalInfo :!showInfos.personalInfo
+                }))}
+              >see more</span>
 
             </div>
               <div style={{backgroundColor:'white',width:'50%',display:'flex',flexDirection:'column',padding:15,gap:15,height:190}}>
@@ -225,24 +240,34 @@ export default function Home() {
                 <span style={{fontSize:12,color:"gray"}}>Email:{actualUser.email}</span>
                 <span style={{fontSize:12,color:"gray"}}>phone:{actualUser.phone}</span>
 
-                <span style={{paddingTop:20,borderTop:'1px solid black',color:'blue',cursor:'pointer'}} >see more</span>
+                <span style={{paddingTop:20,borderTop:'1px solid black',color:'blue',cursor:'pointer'}}
+                  onClick={()=> setShowInfos((prev) => ({
+                    ...prev,
+                    contactInfo :!showInfos.contactInfo
+                  }))}
+                >see more</span>
               </div>
 
           </div>
 
         </div>
-        <div style={{display:'flex',width:'50%'}}>
-          <span style={{width:'100%',display:'flex',fontSize:'18px',fontWeight:800}}>Suggestion 4you</span>
-          <span style={{display:'flex',fontSize:'18px',fontWeight:800,alignItems:"center",justifyContent:'flex-end',cursor:'pointer'}}
-            onClick={()=> refreshSuggestions()}
-          >refresh   <LuRefreshCcw/></span>
-        </div>
         
-        <div style={{width:'50%',display:'flex',gap:15}}>
-        {users.map((user:User) => (
-          <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}  key={user.login.uuid} UnfollowUser={UnfollowUser}/>
-        ))}
-        </div>
+        {!showInfos.contactInfo && !showInfos.personalInfo && 
+          <>
+            <div style={{display:'flex',width:'50%'}}>
+              <span style={{width:'100%',display:'flex',fontSize:'18px',fontWeight:800}}>Suggestion 4you</span>
+              <span style={{display:'flex',fontSize:'18px',fontWeight:800,alignItems:"center",justifyContent:'flex-end',cursor:'pointer'}}
+                onClick={()=> refreshSuggestions()}
+              >refresh   <LuRefreshCcw/></span>
+            </div>
+            
+            <div style={{width:'50%',display:'flex',gap:15}}>
+            {users.map((user:User) => (
+              <Recomendations user={user} usersFollowed={usersFollowed}  followUser={followUser}  key={user.login.uuid} UnfollowUser={UnfollowUser}/>
+            ))}
+          </div>
+          </>
+        }
       </div>
     </div>
   );
