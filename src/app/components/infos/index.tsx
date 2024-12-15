@@ -1,0 +1,7 @@
+export const Infos = () => {
+    return(
+        <>
+            
+        </>
+    )
+}
