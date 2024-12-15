@@ -29,7 +29,7 @@ export const FollowersList = ({ setFollowersList, usersFollowed, UnfollowUser }:
       <span
         style={{
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
           color: "#9760F3",
           fontWeight: "bolder",
           alignItems: "center",
